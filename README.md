@@ -5,8 +5,8 @@
 
 ## 시작하기
 ```bash
-git clone https://github.com/ohzoohzo/map-5.git
-cd map-5
+git clone https://github.com/Wanted-AI-NativeCamp/D08-api.git
+cd D08-api
 cp .env.example .env              # 키는 팀 채팅에서 받기 (커밋 금지)
 python -m venv .venv
 .venv/bin/pip install -r backend/requirements-dev.txt     # Windows: .venv\Scripts\pip ...
@@ -34,8 +34,9 @@ python tools/dev.py               # 화면 http://localhost:8501 · API http://l
 자세한 에이전트용 규칙: [CLAUDE.md](CLAUDE.md)
 
 ## 배포 (Vercel)
-Vercel 프로젝트 2개 (팀 `youn-yeo-wons-projects`): 백엔드 `pinday-api`(저장소 루트, FastAPI) · 프론트 `pinday-web`(`frontend/`, Vite).
-- **백엔드**: 저장소 루트에서 `vercel deploy --prod`. 루트 `index.py` 가 `backend.app.main:app` 을 노출하고, `data/clean.csv` 가 함께 올라간다. 루트 `requirements.txt` 는 `backend/requirements.txt` 중 서버 런타임에 필요한 부분집합이다(테스트가 어긋남을 확인).
-- **프론트**: `frontend/` 에서 `vercel deploy --prod`. `frontend/vercel.json` 이 `/api/*` 를 `https://pinday-api.vercel.app` 으로 넘기고 나머지 경로는 `index.html` 로 보낸다(SPA).
-- **키**: 백엔드 프로젝트에만 넣는다. `vercel env add KAKAO_REST_API_KEY production` (`.env` 는 올라가지 않는다). 새 기능 키(`DATA_GO_KR_SERVICE_KEY`, `OPENWEATHER_API_KEY`, `OPENAI_API_KEY`)도 같은 방식으로 추가한 뒤 다시 배포한다.
-- **카카오 콘솔**: JS 키의 Web 도메인에 `https://pinday-web.vercel.app` 을 등록해야 지도가 뜬다. REST 키에 허용 IP 제한이 있으면 Vercel 에서 장소 검색(맛집·카페·쇼핑)이 거부된다.
+한 저장소에서 Vercel 프로젝트 2개를 만든다: 백엔드 `d08-api`(Root Directory 비움 = 저장소 루트, FastAPI) · 프론트 `d08-web`(Root Directory `frontend`, Vite).
+Vercel 대시보드 → Add New → Project → `Wanted-AI-NativeCamp/D08-api` Import 를 두 번 하면서 이름·Root Directory 만 다르게 준다. 이후 main 에 merge 되면 자동 배포되고, PR 마다 미리보기 배포가 생긴다.
+- **백엔드**: 루트 `index.py` 가 `backend.app.main:app` 을 노출하고, `data/clean.csv` 가 함께 올라간다. 루트 `requirements.txt` 는 `backend/requirements.txt` 중 서버 런타임에 필요한 부분집합이다(테스트가 어긋남을 확인).
+- **프론트**: `frontend/vercel.json` 이 `/api/*` 를 `https://d08-api.vercel.app` 으로 넘기고 나머지 경로는 `index.html` 로 보낸다(SPA). 백엔드 도메인이 다르게 잡혔으면(이름 중복 시 뒤에 접미어가 붙음) 이 주소를 바꾼다.
+- **키**: 백엔드 프로젝트에만 넣는다 (Settings → Environment Variables, 또는 `vercel env add KAKAO_REST_API_KEY production`). `KAKAO_REST_API_KEY`, `KAKAO_JS_KEY` 는 필수, 기능 키(`DATA_GO_KR_SERVICE_KEY`, `OPENWEATHER_API_KEY`, `OPENAI_API_KEY`)는 쓰는 기능만. `.env` 는 올라가지 않는다. 키를 바꾼 뒤에는 다시 배포한다.
+- **카카오 콘솔**: JS 키의 Web 도메인에 `https://d08-web.vercel.app` 을 등록해야 지도가 뜬다. REST 키에 허용 IP 제한이 있으면 Vercel 에서 장소 검색(맛집·카페·쇼핑)이 거부된다.
