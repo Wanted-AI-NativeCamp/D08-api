@@ -1,0 +1,10 @@
+# 프론트 배포(d08-web, Root Directory frontend)용. 루트 .vercelignore 는 백엔드용이라 frontend 를 통째로 빼므로 이 파일이 대신 쓰인다.
+node_modules
+dist
+.env
+.env.*
+!.env.example
+.vercel
+test-results
+playwright-report
+e2e/artifacts
