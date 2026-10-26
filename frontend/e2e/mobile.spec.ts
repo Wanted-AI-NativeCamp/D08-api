@@ -1,0 +1,98 @@
+import { TRAVEL_TEST_IDS as IDS } from '../src/shared/testIds';
+import { expect, expectNames, noHorizontalOverflow, startTrip, test } from './support';
+
+test('모바일 GNB는 스크롤해도 최상단에 고정되고 PinDay 로고만 표시한다', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const header = page.locator('.site-header');
+  const brand = page.locator('.site-header .brand');
+  await expect(header).toBeVisible();
+  await expect(brand.locator('.brand-mark')).toBeVisible();
+  await expect(brand.locator('> span')).toBeHidden();
+  await expect(page.locator('.site-header .header-note')).toBeHidden();
+
+  for (const [label, path] of [['여행 계획하기', '/explore'], ['이동 전 확인하기', '/weather'], ['AI 도슨트', '/docent']] as const) {
+    await page.locator('.site-header .main-nav').getByRole('link', { name: label }).click();
+    await expect(page).toHaveURL(path);
+    await expect(header).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await expect.poll(() => header.evaluate((element) => Math.round(element.getBoundingClientRect().top))).toBe(0);
+  }
+
+  await page.locator('.site-header .main-nav').getByRole('link', { name: '홈' }).click();
+  await expect(page).toHaveURL('/');
+  await expect.poll(() => header.evaluate((element) => Math.round(element.getBoundingClientRect().top))).toBe(0);
+});
+
+test('390px에서 지도를 먼저 표시하고 장소 카드와 일정 화면까지 가로 넘침이 없다', async ({ page }, testInfo) => {
+  const busan = await startTrip(page);
+  await noHorizontalOverflow(page);
+  const chosen = busan.places[0]!;
+  await page.getByRole('button', { name: `${chosen.name} 후보함에 저장`, exact: true }).click();
+  await expect(page.getByTestId(IDS.CANDIDATE_COUNT)).toHaveText('1');
+  await expect(page.getByTestId(IDS.MAP_FRAME)).toBeVisible();
+  await expect(page.getByTestId(IDS.PLACE_GRID)).toBeVisible();
+  expect(await page.locator('.explore-map').evaluate((element) => getComputedStyle(element).position)).toBe('static');
+  expect(await page.getByTestId(IDS.MAP_FRAME).evaluate((element) => element.getBoundingClientRect().height)).toBe(300);
+  await page.screenshot({ path: testInfo.outputPath('explore-390.png') });
+
+  await page.getByRole('button', { name: '날짜별 일정 짜기' }).click();
+  await expect(page.getByTestId(IDS.MAP_FRAME)).toBeVisible();
+  expect(await page.locator('.planner-map').evaluate((element) => getComputedStyle(element).position)).toBe('static');
+  expect(await page.getByTestId(IDS.MAP_FRAME).evaluate((element) => element.getBoundingClientRect().height)).toBe(300);
+  expect(await page.locator('.trip-bar-wrap').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(255, 255, 255)');
+  await page.getByRole('button', { name: `${chosen.name} DAY 1에 추가` }).click();
+  await expectNames(page, IDS.ITINERARY_LIST, [chosen.name]);
+  await noHorizontalOverflow(page);
+  await page.screenshot({ path: testInfo.outputPath('schedule-390.png') });
+});
+
+test('항상 표시되는 모바일 지도는 크기 변경 뒤에도 사용자가 이동한 중심을 유지한다', async ({ page }) => {
+  await page.route('**/api/config', (route) => route.fulfill({ json: { js_key: 'map-layout-test', place_search_enabled: false } }));
+  // SDK boundary spy: relayout deliberately changes its center so missing restoration is observable.
+  await page.route('https://dapi.kakao.com/v2/maps/sdk.js?*', (route) => route.fulfill({ contentType: 'application/javascript', body: `
+    (() => {
+    window.__mapCalls = [];
+    class LatLng { constructor(lat, lng) { this.lat = lat; this.lng = lng; } }
+    class Map {
+      constructor(element, options) { this.element = element; this.center = options.center; this.level = options.level; window.__testMap = this; }
+      relayout() { this.center = new LatLng(0, 0); window.__mapCalls.push({ kind: 'layout' }); }
+      setBounds() { window.__mapCalls.push({ kind: 'bounds', width: this.element.clientWidth, height: this.element.clientHeight }); }
+      setCenter(center) { this.center = center; window.__mapCalls.push({ kind: 'center', level: this.level, lat: center.lat, lng: center.lng }); }
+      getCenter() { return this.center; }
+      setLevel(level) { this.level = level; } getLevel() { return this.level; } panTo(center) { this.center = center; }
+    }
+    class Layer { setMap() {} }
+    window.kakao = { maps: { load(callback) { callback(); }, LatLng, Map,
+      LatLngBounds: class { extend() {} }, CustomOverlay: Layer, Polyline: Layer } };
+    })();
+  ` }));
+  const catalog = await startTrip(page);
+  const bounds = () => page.evaluate(() => (window as unknown as { __mapCalls: { kind: string; width: number; height: number }[] }).__mapCalls.filter((call) => call.kind === 'bounds'));
+  await expect(page.getByTestId(IDS.MAP_FRAME)).toHaveAttribute('data-map-status', 'ready');
+  await expect.poll(async () => (await bounds()).length).toBeGreaterThan(0);
+  expect((await bounds()).every((call) => call.width > 0 && call.height > 0)).toBe(true);
+  expect(await page.getByTestId(IDS.MAP_FRAME).evaluate((element) => element.getBoundingClientRect().height)).toBe(300);
+  const before = (await bounds()).length;
+  await page.evaluate(() => {
+    const runtime = window as unknown as { __testMap: { setCenter(center: { lat: number; lng: number }): void } };
+    runtime.__testMap.setCenter({ lat: 35.1, lng: 129.1 });
+  });
+  const layouts = () => page.evaluate(() => (window as unknown as { __mapCalls: { kind: string }[] }).__mapCalls.filter((call) => call.kind === 'layout').length);
+  const previousLayouts = await layouts();
+  await page.setViewportSize({ width: 410, height: 844 });
+  await expect.poll(layouts).toBeGreaterThan(previousLayouts);
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __testMap: { getCenter(): { lat: number; lng: number } } }).__testMap.getCenter())).toEqual({ lat: 35.1, lng: 129.1 });
+  expect((await bounds()).length).toBe(before);
+  const place = catalog.places[0]!;
+  await page.getByRole('button', { name: `${place.name} 후보함에 저장`, exact: true }).click();
+  await page.getByRole('button', { name: '날짜별 일정 짜기', exact: true }).click();
+  await expect(page.getByTestId(IDS.MAP_FRAME)).toBeVisible();
+  expect(await page.getByTestId(IDS.MAP_FRAME).evaluate((element) => element.getBoundingClientRect().height)).toBe(300);
+  await page.getByRole('button', { name: `${place.name} DAY 1에 추가`, exact: false }).click();
+  // Kakao rounds center coordinates to map pixels: apply the final zoom before
+  // centering a lone pin, otherwise world-zoom rounding becomes a large offset.
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __mapCalls: { kind: string; level: number; lat: number; lng: number }[] }).__mapCalls.filter((call) => call.kind === 'center').at(-1)))
+    .toEqual({ kind: 'center', level: 5, lat: place.latitude, lng: place.longitude });
+});

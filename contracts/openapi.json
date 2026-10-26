@@ -1,0 +1,2034 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "5조 여행 설계 API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/config": {
+      "get": {
+        "summary": "Get Config",
+        "operationId": "get_config",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/docent/status": {
+      "get": {
+        "tags": [
+          "docent"
+        ],
+        "summary": "Docent Status",
+        "operationId": "docent_status",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureStatus"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/docent/story": {
+      "get": {
+        "tags": [
+          "docent"
+        ],
+        "summary": "Docent Story",
+        "operationId": "docent_story",
+        "parameters": [
+          {
+            "name": "place_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "title": "Place Id"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "title": "Name"
+            }
+          },
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 39.0,
+              "minimum": 33.0,
+              "title": "Latitude"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 132.0,
+              "minimum": 124.0,
+              "title": "Longitude"
+            }
+          },
+          {
+            "name": "address",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "default": "",
+              "title": "Address"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocentStory"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          },
+          "504": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Gateway Timeout"
+          }
+        }
+      }
+    },
+    "/api/docent/news": {
+      "get": {
+        "tags": [
+          "docent"
+        ],
+        "summary": "Docent News",
+        "description": "부산시·부산관광공사·지역 언론 보도 중 장소명이 제목에 들어간 최신 3건.",
+        "operationId": "docent_news",
+        "parameters": [
+          {
+            "name": "place_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "title": "Place Id"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocentNews"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          },
+          "504": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Gateway Timeout"
+          }
+        }
+      }
+    },
+    "/api/docent/photos": {
+      "get": {
+        "tags": [
+          "docent"
+        ],
+        "summary": "Docent Photos",
+        "description": "한국관광공사 사진. 정상적으로 사진이 없으면 빈 목록, 공급자 실패는 502.",
+        "operationId": "docent_photos",
+        "parameters": [
+          {
+            "name": "place_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "title": "Place Id"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "title": "Name"
+            }
+          },
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 39.0,
+              "minimum": 33.0,
+              "title": "Latitude"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 132.0,
+              "minimum": 124.0,
+              "title": "Longitude"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocentPhotos"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        }
+      }
+    },
+    "/api/taste/status": {
+      "get": {
+        "tags": [
+          "taste"
+        ],
+        "summary": "Taste Status",
+        "operationId": "taste_status",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureStatus"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transport/routes": {
+      "get": {
+        "tags": [
+          "transport"
+        ],
+        "summary": "Transport Routes",
+        "description": "카카오맵 도보·대중교통 및 카카오모빌리티 자동차 경로의 실제 경로 좌표를 반환한다.",
+        "operationId": "transport_routes",
+        "parameters": [
+          {
+            "name": "mode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "transit",
+                "walk",
+                "car"
+              ],
+              "type": "string",
+              "title": "Mode"
+            }
+          },
+          {
+            "name": "start_latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 39.0,
+              "minimum": 33.0,
+              "title": "Start Latitude"
+            }
+          },
+          {
+            "name": "start_longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 132.0,
+              "minimum": 124.0,
+              "title": "Start Longitude"
+            }
+          },
+          {
+            "name": "end_latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 39.0,
+              "minimum": 33.0,
+              "title": "End Latitude"
+            }
+          },
+          {
+            "name": "end_longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 132.0,
+              "minimum": 124.0,
+              "title": "End Longitude"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransportRoutesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          },
+          "504": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Gateway Timeout"
+          }
+        }
+      }
+    },
+    "/api/travel/catalog": {
+      "get": {
+        "tags": [
+          "travel"
+        ],
+        "summary": "Get Catalog",
+        "operationId": "get_catalog",
+        "parameters": [
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 80,
+              "default": "",
+              "title": "Region"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100,
+              "default": "",
+              "title": "Query"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/travel/search": {
+      "get": {
+        "tags": [
+          "travel"
+        ],
+        "summary": "Search Places",
+        "operationId": "search_places",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "title": "Query"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "FD6",
+                    "CE7",
+                    "AT4",
+                    "CT1"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          },
+          "504": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Gateway Timeout"
+          }
+        }
+      }
+    },
+    "/api/weather/status": {
+      "get": {
+        "tags": [
+          "weather"
+        ],
+        "summary": "Weather Status",
+        "operationId": "weather_status",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureStatus"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/weather/forecast": {
+      "get": {
+        "tags": [
+          "weather"
+        ],
+        "summary": "Weather Forecast",
+        "description": "장소 좌표의 그 날짜(한국 시간) 3시간 단위 예보. 5일 범위 밖이면 status=out_of_range.",
+        "operationId": "weather_forecast",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 39.0,
+              "minimum": 33.0,
+              "title": "Latitude"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 132.0,
+              "minimum": 124.0,
+              "title": "Longitude"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeatherForecast"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          },
+          "504": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Gateway Timeout"
+          }
+        }
+      }
+    },
+    "/api/weather/alternatives": {
+      "get": {
+        "tags": [
+          "weather"
+        ],
+        "summary": "Weather Alternatives",
+        "description": "원래 장소 근처(직선 30km)에서 이름으로 실내로 보이는 관광지를 가까운 순으로.",
+        "operationId": "weather_alternatives",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 39.0,
+              "minimum": 33.0,
+              "title": "Latitude"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 132.0,
+              "minimum": 124.0,
+              "title": "Longitude"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100,
+              "default": "",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeatherAlternatives"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/weather/photo": {
+      "get": {
+        "tags": [
+          "weather"
+        ],
+        "summary": "Weather Photo",
+        "description": "한국관광공사 관광사진 한 장: 장소 → 이름의 주요 단어 → 구·군 → 시·도 순. 장소 사진이 아니면 match 로 알린다.",
+        "operationId": "weather_photo",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "title": "Name"
+            }
+          },
+          {
+            "name": "address",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "default": "",
+              "title": "Address"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeatherPhotoResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CatalogResponse": {
+        "properties": {
+          "places": {
+            "items": {
+              "$ref": "#/components/schemas/Place"
+            },
+            "type": "array",
+            "maxItems": 200,
+            "title": "Places"
+          },
+          "total": {
+            "type": "integer",
+            "maximum": 200.0,
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "regions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Regions"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "date_min": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Min"
+          },
+          "date_max": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Max"
+          },
+          "total_catalog": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total Catalog"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "places",
+          "total",
+          "regions",
+          "source",
+          "source_url",
+          "date_min",
+          "date_max",
+          "total_catalog"
+        ],
+        "title": "CatalogResponse"
+      },
+      "ConfigResponse": {
+        "properties": {
+          "js_key": {
+            "type": "string",
+            "title": "Js Key"
+          },
+          "place_search_enabled": {
+            "type": "boolean",
+            "title": "Place Search Enabled"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "js_key",
+          "place_search_enabled"
+        ],
+        "title": "ConfigResponse"
+      },
+      "DocentNews": {
+        "properties": {
+          "place_id": {
+            "type": "string",
+            "title": "Place Id"
+          },
+          "ready": {
+            "type": "boolean",
+            "title": "Ready"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DocentNewsItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "searched_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Searched At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "place_id",
+          "ready",
+          "message",
+          "items",
+          "model",
+          "searched_at"
+        ],
+        "title": "DocentNews"
+      },
+      "DocentNewsItem": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "published_date": {
+            "type": "string",
+            "title": "Published Date"
+          },
+          "source_name": {
+            "type": "string",
+            "title": "Source Name"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "summary",
+          "published_date",
+          "source_name",
+          "url"
+        ],
+        "title": "DocentNewsItem"
+      },
+      "DocentPhoto": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "title": "Thumbnail Url"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "license": {
+            "type": "string",
+            "title": "License"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "url",
+          "thumbnail_url",
+          "title",
+          "license"
+        ],
+        "title": "DocentPhoto"
+      },
+      "DocentPhotos": {
+        "properties": {
+          "place_id": {
+            "type": "string",
+            "title": "Place Id"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/DocentPhoto"
+            },
+            "type": "array",
+            "title": "Photos"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "place_id",
+          "photos",
+          "source",
+          "source_url"
+        ],
+        "title": "DocentPhotos"
+      },
+      "DocentReference": {
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "catalog",
+              "tour",
+              "heritage"
+            ],
+            "title": "Kind"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "index",
+          "kind",
+          "label",
+          "source",
+          "url",
+          "date"
+        ],
+        "title": "DocentReference",
+        "description": "해설의 근거 원문. 번호(index)로 섹션과 연결된다."
+      },
+      "DocentSection": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": [
+              "history",
+              "feature",
+              "tip"
+            ],
+            "title": "Key"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "body": {
+            "type": "string",
+            "title": "Body"
+          },
+          "reference_indexes": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Reference Indexes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "key",
+          "title",
+          "body",
+          "reference_indexes"
+        ],
+        "title": "DocentSection"
+      },
+      "DocentStory": {
+        "properties": {
+          "place_id": {
+            "type": "string",
+            "title": "Place Id"
+          },
+          "ready": {
+            "type": "boolean",
+            "title": "Ready"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/DocentSection"
+            },
+            "type": "array",
+            "title": "Sections"
+          },
+          "references": {
+            "items": {
+              "$ref": "#/components/schemas/DocentReference"
+            },
+            "type": "array",
+            "title": "References"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "generated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generated At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "place_id",
+          "ready",
+          "message",
+          "summary",
+          "sections",
+          "references",
+          "model",
+          "generated_at"
+        ],
+        "title": "DocentStory"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorResponse"
+      },
+      "FeatureStatus": {
+        "properties": {
+          "feature": {
+            "type": "string",
+            "title": "Feature"
+          },
+          "ready": {
+            "type": "boolean",
+            "title": "Ready"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "feature",
+          "ready",
+          "message"
+        ],
+        "title": "FeatureStatus",
+        "description": "기능 라우터의 연동 상태. 실제 데이터가 없을 때 가짜 값 대신 이 응답으로 상태를 알린다."
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok",
+            "title": "Status"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "HealthResponse"
+      },
+      "Place": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Name"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address"
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 39.0,
+            "minimum": 33.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 132.0,
+            "minimum": 124.0,
+            "title": "Longitude"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone"
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Source"
+          },
+          "source_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Date"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "address",
+          "latitude",
+          "longitude",
+          "category",
+          "description",
+          "phone",
+          "source",
+          "source_date",
+          "url"
+        ],
+        "title": "Place"
+      },
+      "SearchResponse": {
+        "properties": {
+          "places": {
+            "items": {
+              "$ref": "#/components/schemas/Place"
+            },
+            "type": "array",
+            "maxItems": 15,
+            "title": "Places"
+          },
+          "total": {
+            "type": "integer",
+            "maximum": 15.0,
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "source": {
+            "type": "string",
+            "const": "카카오 로컬 API",
+            "title": "Source"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "date_min": {
+            "type": "null",
+            "title": "Date Min"
+          },
+          "date_max": {
+            "type": "null",
+            "title": "Date Max"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "places",
+          "total",
+          "source",
+          "source_url",
+          "date_min",
+          "date_max"
+        ],
+        "title": "SearchResponse"
+      },
+      "TransportPoint": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 39.0,
+            "minimum": 33.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 132.0,
+            "minimum": 124.0,
+            "title": "Longitude"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "title": "TransportPoint"
+      },
+      "TransportRoute": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "walk",
+              "bus",
+              "subway",
+              "mixed",
+              "car"
+            ],
+            "title": "Type"
+          },
+          "distance_m": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Distance M"
+          },
+          "duration_seconds": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Duration Seconds"
+          },
+          "transfers": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transfers"
+          },
+          "fare_won": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fare Won"
+          },
+          "toll_won": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toll Won"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/TransportStep"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Steps"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "distance_m",
+          "duration_seconds",
+          "transfers",
+          "fare_won",
+          "steps"
+        ],
+        "title": "TransportRoute"
+      },
+      "TransportRoutesResponse": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "transit",
+              "walk",
+              "car"
+            ],
+            "title": "Mode"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "no_route"
+            ],
+            "title": "Status"
+          },
+          "routes": {
+            "items": {
+              "$ref": "#/components/schemas/TransportRoute"
+            },
+            "type": "array",
+            "title": "Routes"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "카카오맵",
+              "카카오모빌리티"
+            ],
+            "title": "Source"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "mode",
+          "status",
+          "routes",
+          "source",
+          "source_url"
+        ],
+        "title": "TransportRoutesResponse"
+      },
+      "TransportStep": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "walk",
+              "bus",
+              "subway",
+              "car"
+            ],
+            "title": "Mode"
+          },
+          "instruction": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Instruction"
+          },
+          "distance_m": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Distance M"
+          },
+          "duration_seconds": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Duration Seconds"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/TransportPoint"
+            },
+            "type": "array",
+            "minItems": 2,
+            "title": "Path"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "mode",
+          "instruction",
+          "distance_m",
+          "duration_seconds",
+          "path"
+        ],
+        "title": "TransportStep"
+      },
+      "WeatherAlternative": {
+        "properties": {
+          "place": {
+            "$ref": "#/components/schemas/Place"
+          },
+          "distance_km": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Distance Km"
+          },
+          "indoor_hint": {
+            "type": "string",
+            "title": "Indoor Hint"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "place",
+          "distance_km",
+          "indoor_hint"
+        ],
+        "title": "WeatherAlternative"
+      },
+      "WeatherAlternatives": {
+        "properties": {
+          "origin_indoor_hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin Indoor Hint"
+          },
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/WeatherAlternative"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "title": "Alternatives"
+          },
+          "radius_km": {
+            "type": "number",
+            "title": "Radius Km"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "origin_indoor_hint",
+          "alternatives",
+          "radius_km",
+          "source",
+          "source_url"
+        ],
+        "title": "WeatherAlternatives"
+      },
+      "WeatherForecast": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "title": "Date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "out_of_range"
+            ],
+            "title": "Status"
+          },
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/WeatherSlot"
+            },
+            "type": "array",
+            "title": "Slots"
+          },
+          "rain_threshold": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Rain Threshold"
+          },
+          "source": {
+            "type": "string",
+            "const": "OpenWeather 5 Day / 3 Hour Forecast",
+            "title": "Source"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "fetched_at": {
+            "type": "string",
+            "title": "Fetched At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "date",
+          "status",
+          "slots",
+          "rain_threshold",
+          "source",
+          "source_url",
+          "fetched_at"
+        ],
+        "title": "WeatherForecast"
+      },
+      "WeatherPhoto": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "photographer": {
+            "type": "string",
+            "title": "Photographer"
+          },
+          "match": {
+            "type": "string",
+            "enum": [
+              "place",
+              "related",
+              "area"
+            ],
+            "title": "Match"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "url",
+          "title",
+          "photographer",
+          "match",
+          "label",
+          "source",
+          "source_url"
+        ],
+        "title": "WeatherPhoto"
+      },
+      "WeatherPhotoResponse": {
+        "properties": {
+          "photo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WeatherPhoto"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "photo"
+        ],
+        "title": "WeatherPhotoResponse"
+      },
+      "WeatherSlot": {
+        "properties": {
+          "time": {
+            "type": "string",
+            "title": "Time"
+          },
+          "temperature": {
+            "type": "number",
+            "title": "Temperature"
+          },
+          "rain_probability": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Rain Probability"
+          },
+          "condition": {
+            "type": "string",
+            "title": "Condition"
+          },
+          "rain_expected": {
+            "type": "boolean",
+            "title": "Rain Expected"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "time",
+          "temperature",
+          "rain_probability",
+          "condition",
+          "rain_expected"
+        ],
+        "title": "WeatherSlot",
+        "description": "3시간 단위 예보 한 칸. time 은 API 가 실제 반환한 시각을 한국 시간으로 바꾼 값."
+      }
+    }
+  }
+}
